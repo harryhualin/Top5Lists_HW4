@@ -12,6 +12,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AuthContext from '../auth'
+import { GlobalStoreContext } from '../store'
+import { useContext } from 'react';
 
 function Copyright(props) {
   return (
@@ -29,10 +32,19 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
+  const { auth } = useContext(AuthContext);
+  const { store } = useContext(GlobalStoreContext)
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
+   
+      auth.loginUser({
+          email: data.get('email'),
+          password: data.get('password')
+      }, store);
+  
     console.log({
       email: data.get('email'),
       password: data.get('password'),
