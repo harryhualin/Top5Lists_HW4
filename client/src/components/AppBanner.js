@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import ErrorModal from './ErrorModals';
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -83,6 +84,12 @@ export default function AppBanner() {
     function getAccountMenu(loggedIn) {
         return <AccountCircle />;
     }
+    
+    let userIni=""
+    if (auth.user){
+        let textArray=auth.user.email.split('@');
+        userIni=textArray[0][0].toUpperCase()+textArray[1][0].toUpperCase();
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -110,11 +117,22 @@ export default function AppBanner() {
                             { getAccountMenu(auth.loggedIn) }
                         </IconButton>
                     </Box>
+                    <Typography                        
+                        variant="h4"
+                        noWrap
+                        component="div"
+                        sx={{ display: { xs: 'none', sm: 'block' } }}                        
+                    >
+                        <span style={{ textDecoration: 'none', color: 'white' }} to='/'>{userIni}</span>
+                    </Typography>
                 </Toolbar>
+                <ErrorModal/>
             </AppBar>
             {
                 menu
+                
             }
+            
         </Box>
     );
 }

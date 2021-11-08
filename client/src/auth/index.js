@@ -97,6 +97,16 @@ function AuthContextProvider(props) {
             history.push("/");
             store.loadIdNamePairs();
         }
+        if (response.status != 200) {
+            authReducer({
+                type: AuthActionType.ERROR,
+                payload: {
+                    user: response.data.user
+                }
+            })
+            history.push("/");
+            store.loadIdNamePairs();
+        }
 
     }
     auth.logoutUser=async function(){

@@ -16,6 +16,7 @@ import AuthContext from '../auth'
 import { GlobalStoreContext } from '../store'
 import { useContext } from 'react';
 
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -50,11 +51,12 @@ export default function SignInSide() {
       password: data.get('password'),
     });
   };
-
+  
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '40vh' }}>
         <CssBaseline />
+        
         <Grid
           item
           xs={false}
