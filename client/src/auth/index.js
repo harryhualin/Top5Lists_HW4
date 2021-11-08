@@ -2,7 +2,7 @@ import { appendOwnerState } from "@mui/core";
 import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from '../api'
-import ErrorModal from "../components/ErrorModals";
+import ErrorModal from "../components/Modals";
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -131,8 +131,7 @@ function AuthContextProvider(props) {
             })
             history.push("/");
             store.loadIdNamePairs();
-        }}
-        catch(err){ 
+        }}catch(err){ 
             authReducer({
                 type: AuthActionType.SHOW_ERROR,
                 payload: {

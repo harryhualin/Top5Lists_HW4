@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import AuthContext from '../auth'
 import { useContext,useState } from 'react';
 import Alert from '@mui/material/Alert';
-
+import GlobalStoreContext from '../store';
 
 const style = {
   position: 'absolute',
@@ -20,25 +20,56 @@ const style = {
   p: 4,
 };
 
-export default function ErrorModal() {
-
+export default function Modals() {
+  const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
-  const [open, setOpen] = useState(true);
-  const handleClose = () => setOpen(false);
-
+  //const [open, setOpen] = useState(true);
+  //const handleClose = () => setOpen(false);
+  let open=false
   const hideError = () => {
       auth.hideError();
   }
+  const cancelDeletion = () => {
+    store.unmarkListForDeletion();
+  }
+  const handleDeletion = () => {
+    store.deleteMarkedList();
+  }
   let textError="Something Wrong"
   let component = "";
-  if(auth.err)
-    textError=auth.err
+  if(auth.err){textError=auth.err};
 
-  if(auth.err) {
+  if(store && store.listMarkedForDeletion){
+    open = true;
     component = <div>
            <Modal
           open={open}
-          //onClose={handleClose}
+          onClose={hideError}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h5" component="h2">
+            ERROR
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <Alert severity = "error"> Do you want to delete the Top 5 {store.listMarkedForDeletion.name}?</Alert>
+            </Typography>
+            <Button variant="outlined" onClick={handleDeletion}>Confirmed</Button>
+            <Button variant="outlined" onClick={cancelDeletion}>Cancel</Button>
+          </Box>
+        </Modal>
+      </div>
+
+  }
+
+
+  if(auth.err) {
+    open = true;
+    component = <div>
+           <Modal
+          open={open}
+          onClose={hideError}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -54,6 +85,6 @@ export default function ErrorModal() {
         </Modal>
       </div>
   }
-
+  
   return (component);
 }

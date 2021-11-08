@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AuthContext from '../auth'
 import { GlobalStoreContext } from '../store'
 import { useContext } from 'react';
-import ErrorModal from "./ErrorModals";
+import Modals from "./Modals";
 
 
 function Copyright(props) {
@@ -57,7 +57,7 @@ export default function SignInSide() {
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '40vh' }}>
         <CssBaseline />
-        <ErrorModal />
+        <Modals />
         <Grid
           item
           xs={false}

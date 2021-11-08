@@ -87,8 +87,8 @@ export default function AppBanner() {
     
     let userIni=""
     if (auth.user){
-        let textArray=auth.user.email.split('@')
-        userIni=textArray[0][0].toUpperCase()+textArray[1][0].toUpperCase()
+        
+        userIni=auth.user.firstName[0].toUpperCase()+auth.user.lastName[0].toUpperCase()
     }
 
     return (

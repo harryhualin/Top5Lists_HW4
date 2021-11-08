@@ -255,7 +255,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                 payload: top5List
-            });
+            });       
         }
     }
 
