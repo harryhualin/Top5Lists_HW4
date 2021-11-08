@@ -68,6 +68,7 @@ function AuthContextProvider(props) {
                 }
             });
         }
+       
     }
    
     auth.registerUser = async function(userData, store) {
