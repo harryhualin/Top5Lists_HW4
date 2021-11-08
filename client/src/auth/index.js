@@ -2,6 +2,7 @@ import { appendOwnerState } from "@mui/core";
 import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from '../api'
+import ErrorModal from "../components/ErrorModals";
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -11,13 +12,17 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     REGISTER_USER: "REGISTER_USER",
     LOGIN_USER:"LOGIN_USER",
-    LOGOUT_USER:"LOGOUT_USER"
+    LOGOUT_USER:"LOGOUT_USER",
+    SHOW_ERROR: "SHOW_ERROR",
+    HIDE_ERROR: "HIDE_ERROR"
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        err: null
+        
     });
     const history = useHistory();
 
@@ -31,25 +36,46 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn
+                    loggedIn: payload.loggedIn,
+                    err: null 
                 });
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    err: null 
                 })
             }
             case AuthActionType.LOGIN_USER:{
                 return setAuth({
                     user:payload.user,
-                    loggedIn:true
+                    loggedIn:true,
+                    err: null
+                   
                 })
             }
             case AuthActionType.LOGOUT_USER:{
                 return setAuth({
                     user:null,
-                    loggedIn:false
+                    loggedIn:false,
+                    err: null
+               
+                })
+            }
+            case AuthActionType.SHOW_ERROR:{
+                return setAuth({
+                    user:auth.user,
+                    loggedIn:auth.loggedIn,
+                    err: payload.msg
+                  
+                })
+            }
+            case AuthActionType.HIDE_ERROR:{
+                return setAuth({
+                    user:auth.user,
+                    loggedIn:auth.loggedIn,
+                    err: null                 
                 })
             }
             default:
@@ -72,7 +98,7 @@ function AuthContextProvider(props) {
     }
    
     auth.registerUser = async function(userData, store) {
-        const response = await api.registerUser(userData);      
+        try {const response = await api.registerUser(userData);      
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.REGISTER_USER,
@@ -82,10 +108,19 @@ function AuthContextProvider(props) {
             })
             history.push("/");
             store.loadIdNamePairs();
+        }}catch(err){
+            authReducer({
+                type: AuthActionType.SHOW_ERROR,
+                payload: {
+                    msg: err.response.data.errorMessage
+                }
+            })
         }
     }
     
     auth.loginUser=async function(userData,store){
+        try
+        {
         const response=await api.loginUser(userData);   
         if (response.status === 200) {
             authReducer({
@@ -96,18 +131,21 @@ function AuthContextProvider(props) {
             })
             history.push("/");
             store.loadIdNamePairs();
-        }
-        if (response.status != 200) {
+        }}
+        catch(err){ 
             authReducer({
-                type: AuthActionType.ERROR,
+                type: AuthActionType.SHOW_ERROR,
                 payload: {
-                    user: response.data.user
+                    msg: err.response.data.errorMessage
                 }
             })
-            history.push("/");
-            store.loadIdNamePairs();
         }
-
+    }
+    auth.hideError = function() {
+        authReducer({
+            type: AuthActionType.HIDE_ERROR,
+            payload: null
+        })
     }
     auth.logoutUser=async function(){
         const response= await api.logoutUser();
@@ -119,11 +157,14 @@ function AuthContextProvider(props) {
             history.push("/");
         }
     }
+
     return (
-        <AuthContext.Provider value={{
+        <AuthContext.Provider 
+        value={{
             auth
-        }}>
+        }}> 
             {props.children}
+        <ErrorModal />    
         </AuthContext.Provider>
     );
 }

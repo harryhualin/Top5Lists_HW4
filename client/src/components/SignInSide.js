@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AuthContext from '../auth'
 import { GlobalStoreContext } from '../store'
 import { useContext } from 'react';
+import ErrorModal from "./ErrorModals";
 
 
 function Copyright(props) {
@@ -41,10 +42,10 @@ export default function SignInSide() {
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
    
-      auth.loginUser({
-          email: data.get('email'),
-          password: data.get('password')
-      }, store);
+    auth.loginUser({
+        email: data.get('email'),
+        password: data.get('password')
+    }, store);
   
     console.log({
       email: data.get('email'),
@@ -56,7 +57,7 @@ export default function SignInSide() {
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '40vh' }}>
         <CssBaseline />
-        
+        <ErrorModal />
         <Grid
           item
           xs={false}

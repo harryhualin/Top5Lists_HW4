@@ -4,8 +4,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AuthContext from '../auth'
-import { GlobalStoreContext } from '../store'
-import { useContext } from 'react';
+import { useContext,useState } from 'react';
+import Alert from '@mui/material/Alert';
+
 
 const style = {
   position: 'absolute',
@@ -20,33 +21,39 @@ const style = {
 };
 
 export default function ErrorModal() {
-    const { auth } = useContext(AuthContext);
-    const { store } = useContext(GlobalStoreContext);
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
-    if (auth.errorType)
-    {
-        handleOpen();
-    }
-    return (
-        <div>
-        <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            error
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {store.errorType}
-          </Typography>
-        </Box>
-      </Modal>
-    </div>
-  );
+  const { auth } = useContext(AuthContext);
+  const [open, setOpen] = useState(true);
+  const handleClose = () => setOpen(false);
+
+  const hideError = () => {
+      auth.hideError();
+  }
+  let textError="Something Wrong"
+  let component = "";
+  if(auth.err)
+    textError=auth.err
+
+  if(auth.err) {
+    component = <div>
+           <Modal
+          open={open}
+          //onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h5" component="h2">
+            ERROR
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <Alert severity="error">{textError}</Alert>
+            </Typography>
+            <Button variant="outlined" onClick={hideError}>Confirmed</Button>
+          </Box>
+        </Modal>
+      </div>
+  }
+
+  return (component);
 }
